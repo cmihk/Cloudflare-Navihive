@@ -371,7 +371,7 @@ const GroupCard: React.FC<GroupCardProps> = ({
                                             fontSize: { xs: '0.75rem', sm: '0.875rem' }
                                         }}
                                     >
-                                        添加卡片
+                                        新增网站
                                     </Button>
                                 )}
                                 <Button
@@ -385,7 +385,7 @@ const GroupCard: React.FC<GroupCardProps> = ({
                                         fontSize: { xs: '0.75rem', sm: '0.875rem' }
                                     }}
                                 >
-                                    排序
+                                    调整排序
                                 </Button>
                                 
                                 {onUpdateGroup && onDeleteGroup && (
