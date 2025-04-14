@@ -1026,7 +1026,7 @@ function App() {
                                                 fontSize: { xs: "0.75rem", sm: "0.875rem" },
                                             }}
                                         >
-                                            保存分组顺序
+                                            保存顺序
                                         </Button>
                                     )}
                                     <Button
@@ -1040,7 +1040,7 @@ function App() {
                                             fontSize: { xs: "0.75rem", sm: "0.875rem" },
                                         }}
                                     >
-                                        取消编辑
+                                        取消调整
                                     </Button>
                                 </>
                             ) : (
@@ -1088,7 +1088,7 @@ function App() {
                                             <ListItemIcon>
                                                 <SortIcon fontSize='small' />
                                             </ListItemIcon>
-                                            <ListItemText>编辑排序</ListItemText>
+                                            <ListItemText>调整排序</ListItemText>
                                         </MenuItem>
                                         <MenuItem onClick={handleOpenConfig}>
                                             <ListItemIcon>
@@ -1459,7 +1459,7 @@ function App() {
                                         margin='dense'
                                         id='site-icon-api'
                                         name='site.iconApi'
-                                        label='图标API URL地址'
+                                        label='图标API URL'
                                         type='text'
                                         fullWidth
                                         variant='outlined'

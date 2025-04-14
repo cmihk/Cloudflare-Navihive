@@ -371,7 +371,7 @@ const GroupCard: React.FC<GroupCardProps> = ({
                                             fontSize: { xs: '0.75rem', sm: '0.875rem' }
                                         }}
                                     >
-                                        新增网站
+                                        新增站点
                                     </Button>
                                 )}
                                 <Button
