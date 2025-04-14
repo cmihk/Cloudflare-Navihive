@@ -108,7 +108,7 @@ const DEFAULT_CONFIGS = {
     "site.customCss": "",
     "site.backgroundImage": "", // 背景图片URL
     "site.backgroundOpacity": "0.15", // 背景蒙版透明度
-    "site.iconApi": "https://www.faviconextractor.com/favicon/{domain}", // 图标API接口
+    "site.iconApi": "https://www.faviconextractor.com/favicon/{domain}?larger=true", // 默认使用的 API 接口，携带参数可以获取最大尺寸的图标
 };
 
 function App() {
@@ -1450,22 +1450,23 @@ function App() {
                                     value={tempConfigs["site.name"]}
                                     onChange={handleConfigInputChange}
                                 />
+                                {/* 新增自定义获取图标的接口设置 */}
                                 <Box sx={{ mb: 1 }}>
                                     <Typography variant="subtitle1" gutterBottom>
-                                        图标API设置
+                                        获取图标API设置
                                     </Typography>
                                     <TextField
                                         margin='dense'
                                         id='site-icon-api'
                                         name='site.iconApi'
-                                        label='图标API URL'
+                                        label='图标API URL地址'
                                         type='text'
                                         fullWidth
                                         variant='outlined'
                                         value={tempConfigs["site.iconApi"]}
                                         onChange={handleConfigInputChange}
                                         placeholder='https://example.com/favicon/{domain}'
-                                        helperText='输入图标API地址，使用{domain}作为域名占位符'
+                                        helperText='输入获取图标API的地址，使用 {domain} 作为域名占位符'
                                     />
                                 </Box>
                                 {/* 背景图片设置 */}
