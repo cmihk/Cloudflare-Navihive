@@ -1453,7 +1453,7 @@ function App() {
                                 {/* 获取图标API设置项 */}
                                 <Box sx={{ mb: 1 }}>
                                     <Typography variant="subtitle1" gutterBottom>
-                                        获取图标API设置
+                                        图标API设置
                                     </Typography>
                                     <TextField
                                         margin='dense'
