@@ -108,6 +108,7 @@ const DEFAULT_CONFIGS = {
     "site.customCss": "",
     "site.backgroundImage": "", // 背景图片URL
     "site.backgroundOpacity": "0.15", // 背景蒙版透明度
+    "site.iconApi": "https://www.faviconextractor.com/favicon/{domain}", // 图标API接口
 };
 
 function App() {
@@ -1340,7 +1341,7 @@ function App() {
                                                         }
                                                         const domain = extractDomain(newSite.url);
                                                         if (domain) {
-                                                            const iconUrl = `https://www.faviconextractor.com/favicon/${domain}`;
+                                                            const iconUrl = configs["site.iconApi"].replace("{domain}", domain);
                                                             setNewSite({
                                                                 ...newSite,
                                                                 icon: iconUrl
@@ -1449,7 +1450,25 @@ function App() {
                                     value={tempConfigs["site.name"]}
                                     onChange={handleConfigInputChange}
                                 />
-                                {/* 新增背景图片设置 */}
+                                <Box sx={{ mb: 1 }}>
+                                    <Typography variant="subtitle1" gutterBottom>
+                                        图标API设置
+                                    </Typography>
+                                    <TextField
+                                        margin='dense'
+                                        id='site-icon-api'
+                                        name='site.iconApi'
+                                        label='图标API URL'
+                                        type='text'
+                                        fullWidth
+                                        variant='outlined'
+                                        value={tempConfigs["site.iconApi"]}
+                                        onChange={handleConfigInputChange}
+                                        placeholder='https://example.com/favicon/{domain}'
+                                        helperText='输入图标API地址，使用{domain}作为域名占位符'
+                                    />
+                                </Box>
+                                {/* 背景图片设置 */}
                                 <Box sx={{ mb: 1 }}>
                                     <Typography variant="subtitle1" gutterBottom>
                                         背景图片设置
