@@ -1469,7 +1469,7 @@ function App() {
                                         helperText='输入获取图标API的地址，使用 {domain} 作为域名占位符'
                                     />
                                 </Box>
-                                {/* 新增背景图片设置 */}
+                                {/* 背景图片设置 */}
                                 <Box sx={{ mb: 1 }}>
                                     <Typography variant="subtitle1" gutterBottom>
                                         背景图片设置
