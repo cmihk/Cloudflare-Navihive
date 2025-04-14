@@ -1026,7 +1026,7 @@ function App() {
                                                 fontSize: { xs: "0.75rem", sm: "0.875rem" },
                                             }}
                                         >
-                                            保存顺序
+                                            保存分组顺序
                                         </Button>
                                     )}
                                     <Button
@@ -1040,7 +1040,7 @@ function App() {
                                             fontSize: { xs: "0.75rem", sm: "0.875rem" },
                                         }}
                                     >
-                                        取消调整
+                                        取消编辑
                                     </Button>
                                 </>
                             ) : (
@@ -1088,7 +1088,7 @@ function App() {
                                             <ListItemIcon>
                                                 <SortIcon fontSize='small' />
                                             </ListItemIcon>
-                                            <ListItemText>调整排序</ListItemText>
+                                            <ListItemText>编辑排序</ListItemText>
                                         </MenuItem>
                                         <MenuItem onClick={handleOpenConfig}>
                                             <ListItemIcon>
@@ -1450,7 +1450,7 @@ function App() {
                                     value={tempConfigs["site.name"]}
                                     onChange={handleConfigInputChange}
                                 />
-                                {/* 新增自定义获取图标的接口设置 */}
+                                {/* 获取图标API设置项 */}
                                 <Box sx={{ mb: 1 }}>
                                     <Typography variant="subtitle1" gutterBottom>
                                         获取图标API设置
