@@ -282,7 +282,8 @@ export default function SiteSettingsModal({
                                                         }
                                                         const domain = extractDomain(formData.url);
                                                         if (domain) {
-                                                            const iconUrl = iconApi.replace("{domain}", domain);
+                                                            const actualIconApi = iconApi || "https://www.faviconextractor.com/favicon/{domain}?larger=true";
+                                                            const iconUrl = actualIconApi.replace("{domain}", domain);
                                                             setFormData(prev => ({
                                                                 ...prev,
                                                                 icon: iconUrl
