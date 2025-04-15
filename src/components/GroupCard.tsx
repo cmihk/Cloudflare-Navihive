@@ -40,6 +40,8 @@ interface GroupCardProps {
     onAddSite?: (groupId: number) => void; // 新增添加卡片的可选回调函数
     onUpdateGroup?: (group: Group) => void; // 更新分组的回调函数
     onDeleteGroup?: (groupId: number) => void; // 删除分组的回调函数
+    groups: Group[]; // 传入分组列表
+    configs?: Record<string, string>; // 传入配置
 }
 
 const GroupCard: React.FC<GroupCardProps> = ({
@@ -53,6 +55,8 @@ const GroupCard: React.FC<GroupCardProps> = ({
     onAddSite,
     onUpdateGroup,
     onDeleteGroup,
+    groups,
+    configs,
 }) => {
     // 添加本地状态来管理站点排序
     const [sites, setSites] = useState<Site[]>(group.sites);
@@ -191,6 +195,8 @@ const GroupCard: React.FC<GroupCardProps> = ({
                                             onDelete={onDelete}
                                             isEditMode={true}
                                             index={idx}
+                                            groups={groups}
+                                            iconApi={configs?.["site.iconApi"]} // 传入iconApi配置
                                         />
                                     </Box>
                                 ))}
@@ -210,28 +216,16 @@ const GroupCard: React.FC<GroupCardProps> = ({
                     margin: -1, // 抵消内部padding，确保边缘对齐
                 }}
             >
-                {sitesToRender.map(site => (
-                    <Box
-                        key={site.id}
-                        sx={{
-                            width: {
-                                xs: "100%",
-                                sm: "50%",
-                                md: "33.33%",
-                                lg: "25%",
-                                xl: "20%",
-                            },
-                            padding: 1, // 内部间距，更均匀的分布
-                            boxSizing: "border-box", // 确保padding不影响宽度计算
-                        }}
-                    >
-                        <SiteCard
-                            site={site}
-                            onUpdate={onUpdate}
-                            onDelete={onDelete}
-                            isEditMode={false}
-                        />
-                    </Box>
+                {group.sites.map((site, index) => (
+                    <SiteCard
+                        key={site.id || index}
+                        site={site}
+                        onUpdate={onUpdate}
+                        onDelete={onDelete}
+                        isEditMode={sortMode === "SiteSort" && currentSortingGroupId === group.id}
+                        groups={groups}
+                        iconApi={configs?.["site.iconApi"]} // 传入iconApi配置
+                    />
                 ))}
             </Box>
         );
