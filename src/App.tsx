@@ -1343,7 +1343,8 @@ function App() {
                                                         }
                                                         const domain = extractDomain(newSite.url);
                                                         if (domain) {
-                                                            const iconUrl = configs["site.iconApi"].replace("{domain}", domain);
+                                                            const actualIconApi = configs["site.iconApi"] || "https://www.faviconextractor.com/favicon/{domain}?larger=true";
+                                                            const iconUrl = actualIconApi.replace("{domain}", domain);
                                                             setNewSite({
                                                                 ...newSite,
                                                                 icon: iconUrl
