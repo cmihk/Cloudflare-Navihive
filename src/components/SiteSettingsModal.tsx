@@ -22,6 +22,8 @@ import {
     useTheme,
     SelectChangeEvent,
     InputAdornment,
+    Snackbar,
+    Alert,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -43,6 +45,7 @@ function extractDomain(url: string): string | null {
     if (!url) return null;
     
     try {
+        // 尝试自动添加协议头，如果缺少的话
         let fullUrl = url;
         if (!/^https?:\/\//i.test(url)) {
             fullUrl = 'http://' + url;
@@ -50,6 +53,7 @@ function extractDomain(url: string): string | null {
         const parsedUrl = new URL(fullUrl);
         return parsedUrl.hostname;
     } catch (e) {
+        // 尝试备用方法
         const match = url.match(/^(?:https?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:\/\n?]+)/im);
         return match && match[1] ? match[1] : url;
     }
@@ -64,7 +68,8 @@ export default function SiteSettingsModal({
     iconApi = "https://www.faviconextractor.com/favicon/{domain}?larger=true", // 默认值
 }: SiteSettingsModalProps) {
     const theme = useTheme();
-
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState("");
     // 存储字符串形式的group_id，与Material-UI的Select兼容
     const [formData, setFormData] = useState({
         name: site.name,
@@ -78,9 +83,16 @@ export default function SiteSettingsModal({
     // 用于预览图标
     const [iconPreview, setIconPreview] = useState<string | null>(site.icon || null);
 
-    // 添加错误处理函数
-    const handleError = (message: string) => {
-        alert(message); // 简单的错误提示，实际项目中可以使用更好的UI组件
+    // 处理错误的函数
+    const handleError = (errorMessage: string) => {
+        setSnackbarMessage(errorMessage);
+        setSnackbarOpen(true);
+        console.error(errorMessage);
+    };
+
+    // 关闭错误提示框
+    const handleCloseSnackbar = () => {
+        setSnackbarOpen(false);
     };
 
     // 处理表单字段变化
@@ -159,236 +171,254 @@ export default function SiteSettingsModal({
     const fallbackIcon = formData.name?.charAt(0).toUpperCase() || "A";
 
     return (
-        <Dialog
-            open={true}
-            onClose={onClose}
-            fullWidth
-            maxWidth='sm'
-            PaperProps={{
-                sx: {
-                    borderRadius: 2,
-                    backgroundColor: theme.palette.background.paper,
-                },
-            }}
-        >
-            <DialogTitle
-                sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    padding: 2,
-                    pb: 1.5,
+        <>
+            <Dialog
+                open
+                onClose={onClose}
+                fullWidth
+                maxWidth='sm'
+                PaperProps={{
+                    sx: {
+                        borderRadius: 2,
+                        backgroundColor: theme.palette.background.paper,
+                    },
                 }}
             >
-                <Typography variant='h6' component='div' fontWeight='600'>
-                    网站设置
-                </Typography>
-                <IconButton
-                    edge='end'
-                    color='inherit'
-                    onClick={onClose}
-                    aria-label='关闭'
-                    size='small'
+                <DialogTitle
+                    sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        padding: 2,
+                        pb: 1.5,
+                    }}
                 >
-                    <CloseIcon />
-                </IconButton>
-            </DialogTitle>
-
-            <Divider />
-
-            <form onSubmit={handleSubmit}>
-                <DialogContent sx={{ pt: 2 }}>
-                    <Stack spacing={2.5}>
-                        {/* 网站名称 */}
-                        <TextField
-                            id='name'
-                            name='name'
-                            label='网站名称'
-                            required
-                            fullWidth
-                            value={formData.name || ""}
-                            onChange={handleChange}
-                            placeholder='输入网站名称'
-                            variant='outlined'
-                            size='small'
-                        />
-
-                        {/* 网站链接 */}
-                        <TextField
-                            id='url'
-                            name='url'
-                            label='网站链接'
-                            required
-                            fullWidth
-                            value={formData.url || ""}
-                            onChange={handleChange}
-                            placeholder='https://example.com'
-                            variant='outlined'
-                            size='small'
-                            type='url'
-                        />
-
-                        {/* 网站图标 */}
-                        <Box>
-                            <Typography variant='body2' color='text.secondary' gutterBottom>
-                                图标 URL
-                            </Typography>
-                            <Box sx={{ display: "flex", gap: 1.5, alignItems: "center" }}>
-                                {iconPreview ? (
-                                    <Avatar
-                                        src={iconPreview}
-                                        alt={formData.name || "Icon Preview"}
-                                        sx={{ width: 40, height: 40, borderRadius: 1.5 }}
-                                        imgProps={{
-                                            onError: handleIconError,
-                                            style: { objectFit: "cover" },
-                                        }}
-                                        variant='rounded'
-                                    />
-                                ) : (
-                                    <Avatar
-                                        sx={{
-                                            width: 40,
-                                            height: 40,
-                                            borderRadius: 1.5,
-                                            bgcolor: "primary.light",
-                                            color: "primary.main",
-                                            border: "1px solid",
-                                            borderColor: "primary.main",
-                                        }}
-                                        variant='rounded'
-                                    >
-                                        {fallbackIcon}
-                                    </Avatar>
-                                )}
-
-                                <TextField
-                                    id='icon'
-                                    name='icon'
-                                    fullWidth
-                                    value={formData.icon || ""}
-                                    onChange={handleIconChange}
-                                    placeholder='https://example.com/icon.png'
-                                    variant='outlined'
-                                    size='small'
-                                    InputProps={{
-                                        endAdornment: (
-                                            <InputAdornment position="end">
-                                                <IconButton
-                                                    onClick={() => {
-                                                        if (!formData.url) {
-                                                            handleError("请先输入站点URL");
-                                                            return;
-                                                        }
-                                                        const domain = extractDomain(formData.url);
-                                                        if (domain) {
-                                                            const actualIconApi = iconApi || "https://www.faviconextractor.com/favicon/{domain}?larger=true";
-                                                            const iconUrl = actualIconApi.replace("{domain}", domain);
-                                                            setFormData(prev => ({
-                                                                ...prev,
-                                                                icon: iconUrl
-                                                            }));
-                                                            setIconPreview(iconUrl);
-                                                        } else {
-                                                            handleError("无法从URL中获取域名");
-                                                        }
-                                                    }}
-                                                    edge="end"
-                                                    title="自动获取图标"
-                                                >
-                                                    <AutoFixHighIcon />
-                                                </IconButton>
-                                            </InputAdornment>
-                                        ),
-                                    }}
-                                />
-                            </Box>
-                        </Box>
-
-                        {/* 分组选择 */}
-                        {groups.length > 0 && (
-                            <FormControl fullWidth size='small'>
-                                <InputLabel id='group-select-label'>所属分组</InputLabel>
-                                <Select
-                                    labelId='group-select-label'
-                                    id='group_id'
-                                    name='group_id'
-                                    value={formData.group_id}
-                                    label='所属分组'
-                                    onChange={handleSelectChange}
-                                >
-                                    {groups.map(group => (
-                                        <MenuItem key={group.id} value={String(group.id)}>
-                                            {group.name}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        )}
-
-                        {/* 网站描述 */}
-                        <TextField
-                            id='description'
-                            name='description'
-                            label='网站描述'
-                            multiline
-                            rows={2}
-                            fullWidth
-                            value={formData.description || ""}
-                            onChange={handleChange}
-                            placeholder='简短的网站描述'
-                            variant='outlined'
-                            size='small'
-                        />
-
-                        {/* 备注 */}
-                        <TextField
-                            id='notes'
-                            name='notes'
-                            label='备注'
-                            multiline
-                            rows={3}
-                            fullWidth
-                            value={formData.notes || ""}
-                            onChange={handleChange}
-                            placeholder='可选的私人备注'
-                            variant='outlined'
-                            size='small'
-                        />
-                    </Stack>
-                </DialogContent>
-
-                <DialogActions sx={{ px: 3, pb: 3, pt: 1, justifyContent: "space-between" }}>
-                    <Button
-                        onClick={confirmDelete}
-                        color='error'
-                        variant='contained'
-                        startIcon={<DeleteIcon />}
+                    <Typography variant='h6' component='div' fontWeight='600'>
+                        网站设置
+                    </Typography>
+                    <IconButton
+                        edge='end'
+                        color='inherit'
+                        onClick={onClose}
+                        aria-label='关闭'
+                        size='small'
                     >
-                        删除
-                    </Button>
+                        <CloseIcon />
+                    </IconButton>
+                </DialogTitle>
 
-                    <Box>
+                <Divider />
+
+                <form onSubmit={handleSubmit}>
+                    <DialogContent sx={{ pt: 2 }}>
+                        <Stack spacing={2.5}>
+                            {/* 网站名称 */}
+                            <TextField
+                                id='name'
+                                name='name'
+                                label='网站名称'
+                                required
+                                fullWidth
+                                value={formData.name || ""}
+                                onChange={handleChange}
+                                placeholder='输入网站名称'
+                                variant='outlined'
+                                size='small'
+                            />
+
+                            {/* 网站链接 */}
+                            <TextField
+                                id='url'
+                                name='url'
+                                label='网站链接'
+                                required
+                                fullWidth
+                                value={formData.url || ""}
+                                onChange={handleChange}
+                                placeholder='https://example.com'
+                                variant='outlined'
+                                size='small'
+                                type='url'
+                            />
+
+                            {/* 网站图标 */}
+                            <Box>
+                                <Typography variant='body2' color='text.secondary' gutterBottom>
+                                    图标 URL
+                                </Typography>
+                                <Box sx={{ display: "flex", gap: 1.5, alignItems: "center" }}>
+                                    {iconPreview ? (
+                                        <Avatar
+                                            src={iconPreview}
+                                            alt={formData.name || "Icon Preview"}
+                                            sx={{ width: 40, height: 40, borderRadius: 1.5 }}
+                                            imgProps={{
+                                                onError: handleIconError,
+                                                style: { objectFit: "cover" },
+                                            }}
+                                            variant='rounded'
+                                        />
+                                    ) : (
+                                        <Avatar
+                                            sx={{
+                                                width: 40,
+                                                height: 40,
+                                                borderRadius: 1.5,
+                                                bgcolor: "primary.light",
+                                                color: "primary.main",
+                                                border: "1px solid",
+                                                borderColor: "primary.main",
+                                            }}
+                                            variant='rounded'
+                                        >
+                                            {fallbackIcon}
+                                        </Avatar>
+                                    )}
+
+                                    <TextField
+                                        id='icon'
+                                        name='icon'
+                                        fullWidth
+                                        value={formData.icon || ""}
+                                        onChange={handleIconChange}
+                                        placeholder='https://example.com/icon.png'
+                                        variant='outlined'
+                                        size='small'
+                                        InputProps={{
+                                            endAdornment: (
+                                                <InputAdornment position="end">
+                                                    <IconButton
+                                                        onClick={() => {
+                                                            if (!formData.url) {
+                                                                handleError("请先输入站点URL");
+                                                                return;
+                                                            }
+                                                            const domain = extractDomain(formData.url);
+                                                            if (domain) {
+                                                                const actualIconApi = iconApi || "https://www.faviconextractor.com/favicon/{domain}?larger=true";
+                                                                const iconUrl = actualIconApi.replace("{domain}", domain);
+                                                                setFormData(prev => ({
+                                                                    ...prev,
+                                                                    icon: iconUrl
+                                                                }));
+                                                                setIconPreview(iconUrl);
+                                                            } else {
+                                                                handleError("无法从URL中获取域名");
+                                                            }
+                                                        }}
+                                                        edge="end"
+                                                        title="自动获取图标"
+                                                    >
+                                                        <AutoFixHighIcon />
+                                                    </IconButton>
+                                                </InputAdornment>
+                                            ),
+                                        }}
+                                    />
+                                </Box>
+                            </Box>
+
+                            {/* 分组选择 */}
+                            {groups.length > 0 && (
+                                <FormControl fullWidth size='small'>
+                                    <InputLabel id='group-select-label'>所属分组</InputLabel>
+                                    <Select
+                                        labelId='group-select-label'
+                                        id='group_id'
+                                        name='group_id'
+                                        value={formData.group_id}
+                                        label='所属分组'
+                                        onChange={handleSelectChange}
+                                    >
+                                        {groups.map(group => (
+                                            <MenuItem key={group.id} value={String(group.id)}>
+                                                {group.name}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                            )}
+
+                            {/* 网站描述 */}
+                            <TextField
+                                id='description'
+                                name='description'
+                                label='网站描述'
+                                multiline
+                                rows={2}
+                                fullWidth
+                                value={formData.description || ""}
+                                onChange={handleChange}
+                                placeholder='简短的网站描述'
+                                variant='outlined'
+                                size='small'
+                            />
+
+                            {/* 备注 */}
+                            <TextField
+                                id='notes'
+                                name='notes'
+                                label='备注'
+                                multiline
+                                rows={3}
+                                fullWidth
+                                value={formData.notes || ""}
+                                onChange={handleChange}
+                                placeholder='可选的私人备注'
+                                variant='outlined'
+                                size='small'
+                            />
+                        </Stack>
+                    </DialogContent>
+
+                    <DialogActions sx={{ px: 3, pb: 3, pt: 1, justifyContent: "space-between" }}>
                         <Button
-                            onClick={onClose}
-                            color='inherit'
-                            variant='outlined'
-                            sx={{ mr: 1.5 }}
-                            startIcon={<CancelIcon />}
-                        >
-                            取消
-                        </Button>
-                        <Button
-                            type='submit'
-                            color='primary'
+                            onClick={confirmDelete}
+                            color='error'
                             variant='contained'
-                            startIcon={<SaveIcon />}
+                            startIcon={<DeleteIcon />}
                         >
-                            保存
+                            删除
                         </Button>
-                    </Box>
-                </DialogActions>
-            </form>
-        </Dialog>
+
+                        <Box>
+                            <Button
+                                onClick={onClose}
+                                color='inherit'
+                                variant='outlined'
+                                sx={{ mr: 1.5 }}
+                                startIcon={<CancelIcon />}
+                            >
+                                取消
+                            </Button>
+                            <Button
+                                type='submit'
+                                color='primary'
+                                variant='contained'
+                                startIcon={<SaveIcon />}
+                            >
+                                保存
+                            </Button>
+                        </Box>
+                    </DialogActions>
+                </form>
+            </Dialog>
+
+            <Snackbar
+                open={snackbarOpen}
+                autoHideDuration={6000}
+                onClose={handleCloseSnackbar}
+                anchorOrigin={{ vertical: "top", horizontal: "center" }}
+            >
+                <Alert
+                    onClose={handleCloseSnackbar}
+                    severity="error"
+                    variant="filled"
+                    sx={{ width: "100%" }}
+                >
+                    {snackbarMessage}
+                </Alert>
+            </Snackbar>
+        </>
     );
 }
