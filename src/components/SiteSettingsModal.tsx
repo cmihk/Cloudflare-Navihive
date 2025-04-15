@@ -21,11 +21,13 @@ import {
     Avatar,
     useTheme,
     SelectChangeEvent,
+    InputAdornment,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Cancel";
+import AutoFixHighIcon from "@mui/icons-material/AutoFixHigh";
 
 interface SiteSettingsModalProps {
     site: Site;
@@ -33,6 +35,24 @@ interface SiteSettingsModalProps {
     onDelete: (siteId: number) => void;
     onClose: () => void;
     groups?: Group[]; // 可选的分组列表
+    iconApi?: string; // 图标API配置
+}
+
+// 辅助函数：提取域名
+function extractDomain(url: string): string | null {
+    if (!url) return null;
+    
+    try {
+        let fullUrl = url;
+        if (!/^https?:\/\//i.test(url)) {
+            fullUrl = 'http://' + url;
+        }
+        const parsedUrl = new URL(fullUrl);
+        return parsedUrl.hostname;
+    } catch (e) {
+        const match = url.match(/^(?:https?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:\/\n?]+)/im);
+        return match && match[1] ? match[1] : url;
+    }
 }
 
 export default function SiteSettingsModal({
@@ -41,6 +61,7 @@ export default function SiteSettingsModal({
     onDelete,
     onClose,
     groups = [],
+    iconApi = "https://www.faviconextractor.com/favicon/{domain}", // 默认值
 }: SiteSettingsModalProps) {
     const theme = useTheme();
 
@@ -56,6 +77,11 @@ export default function SiteSettingsModal({
 
     // 用于预览图标
     const [iconPreview, setIconPreview] = useState<string | null>(site.icon || null);
+
+    // 添加错误处理函数
+    const handleError = (message: string) => {
+        alert(message); // 简单的错误提示，实际项目中可以使用更好的UI组件
+    };
 
     // 处理表单字段变化
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -245,6 +271,35 @@ export default function SiteSettingsModal({
                                     placeholder='https://example.com/icon.png'
                                     variant='outlined'
                                     size='small'
+                                    InputProps={{
+                                        endAdornment: (
+                                            <InputAdornment position="end">
+                                                <IconButton
+                                                    onClick={() => {
+                                                        if (!formData.url) {
+                                                            handleError("请先输入站点URL");
+                                                            return;
+                                                        }
+                                                        const domain = extractDomain(formData.url);
+                                                        if (domain) {
+                                                            const iconUrl = iconApi.replace("{domain}", domain);
+                                                            setFormData(prev => ({
+                                                                ...prev,
+                                                                icon: iconUrl
+                                                            }));
+                                                            setIconPreview(iconUrl);
+                                                        } else {
+                                                            handleError("无法从URL中获取域名");
+                                                        }
+                                                    }}
+                                                    edge="end"
+                                                    title="自动获取图标"
+                                                >
+                                                    <AutoFixHighIcon />
+                                                </IconButton>
+                                            </InputAdornment>
+                                        ),
+                                    }}
                                 />
                             </Box>
                         </Box>

@@ -24,6 +24,8 @@ interface SiteCardProps {
     onDelete: (siteId: number) => void;
     isEditMode?: boolean;
     index?: number;
+    groups?: Group[];
+    iconApi?: string; // 添加iconApi属性
 }
 
 // 使用memo包装组件以减少不必要的重渲染
@@ -33,6 +35,8 @@ const SiteCard = memo(function SiteCard({
     onDelete,
     isEditMode = false,
     index = 0,
+    groups = [],
+    iconApi, // 添加iconApi参数
 }: SiteCardProps) {
     const [showSettings, setShowSettings] = useState(false);
     const [iconError, setIconError] = useState(!site.icon);
@@ -341,6 +345,8 @@ const SiteCard = memo(function SiteCard({
                         onUpdate={onUpdate}
                         onDelete={onDelete}
                         onClose={handleCloseSettings}
+                        groups={groups}
+                        iconApi={iconApi} // 传递iconApi给SiteSettingsModal
                     />
                 )}
             </>
@@ -357,6 +363,8 @@ const SiteCard = memo(function SiteCard({
                     onUpdate={onUpdate}
                     onDelete={onDelete}
                     onClose={handleCloseSettings}
+                    groups={groups}
+                    iconApi={iconApi} // 传递iconApi给SiteSettingsModal
                 />
             )}
         </>
