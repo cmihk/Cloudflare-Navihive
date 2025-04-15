@@ -61,7 +61,7 @@ export default function SiteSettingsModal({
     onDelete,
     onClose,
     groups = [],
-    iconApi = "https://www.faviconextractor.com/favicon/{domain}", // 默认值
+    iconApi = "https://www.faviconextractor.com/favicon/{domain}?larger=true", // 默认值
 }: SiteSettingsModalProps) {
     const theme = useTheme();
 
