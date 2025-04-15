@@ -215,17 +215,31 @@ const GroupCard: React.FC<GroupCardProps> = ({
                     flexWrap: "wrap",
                     margin: -1, // 抵消内部padding，确保边缘对齐
                 }}
-            >
-                {group.sites.map((site, index) => (
-                    <SiteCard
-                        key={site.id || index}
-                        site={site}
-                        onUpdate={onUpdate}
-                        onDelete={onDelete}
-                        isEditMode={sortMode === "SiteSort" && currentSortingGroupId === group.id}
-                        groups={groups}
-                        iconApi={configs?.["site.iconApi"]} // 传入iconApi配置
-                    />
+                >
+                {sitesToRender.map(site => (
+                    <Box
+                        key={site.id}
+                        sx={{
+                            width: {
+                                xs: "100%",
+                                sm: "50%",
+                                md: "33.33%",
+                                lg: "25%",
+                                xl: "20%",
+                            },
+                            padding: 1, // 内部间距，更均匀的分布
+                            boxSizing: "border-box", // 确保padding不影响宽度计算
+                        }}
+                    >
+                        <SiteCard
+                            site={site}
+                            onUpdate={onUpdate}
+                            onDelete={onDelete}
+                            isEditMode={false}
+                            groups={groups}
+                            iconApi={configs?.["site.iconApi"]} // 传入iconApi配置
+                        />
+                    </Box>
                 ))}
             </Box>
         );
