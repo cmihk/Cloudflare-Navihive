@@ -1184,6 +1184,7 @@ function App() {
                                         <GroupCard
                                             key={`group-${group.id}`}
                                             group={group}
+                                            groups={groups}
                                             sortMode={
                                                 sortMode === SortMode.None ? "None" : "SiteSort"
                                             }
@@ -1195,6 +1196,7 @@ function App() {
                                             onAddSite={handleOpenAddSite}
                                             onUpdateGroup={handleGroupUpdate}
                                             onDeleteGroup={handleGroupDelete}
+                                            configs={configs}
                                         />
                                     ))}
                                 </Stack>

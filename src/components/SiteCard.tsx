@@ -1,6 +1,6 @@
 // src/components/SiteCard.tsx
 import { useState, memo } from "react";
-import { Site } from "../API/http";
+import { Site, Group } from "../API/http";
 import SiteSettingsModal from "./SiteSettingsModal";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
