@@ -215,7 +215,7 @@ const GroupCard: React.FC<GroupCardProps> = ({
                     flexWrap: "wrap",
                     margin: -1, // 抵消内部padding，确保边缘对齐
                 }}
-                >
+            >
                 {sitesToRender.map(site => (
                     <Box
                         key={site.id}

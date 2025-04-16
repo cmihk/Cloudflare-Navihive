@@ -108,7 +108,7 @@ const DEFAULT_CONFIGS = {
     "site.customCss": "",
     "site.backgroundImage": "", // 背景图片URL
     "site.backgroundOpacity": "0.15", // 背景蒙版透明度
-    "site.iconApi": "https://www.faviconextractor.com/favicon/{domain}?larger=true", // 默认使用的 API 接口，携带参数可以获取最大尺寸的图标
+    "site.iconApi": "https://www.faviconextractor.com/favicon/{domain}?larger=true", // 默认使用的API接口，带上 ?larger=true 参数可以获取最大尺寸的图标
 };
 
 function App() {
@@ -1472,7 +1472,7 @@ function App() {
                                         helperText='输入获取图标API的地址，使用 {domain} 作为域名占位符'
                                     />
                                 </Box>
-                                {/* 背景图片设置 */}
+                                {/* 新增背景图片设置 */}
                                 <Box sx={{ mb: 1 }}>
                                     <Typography variant="subtitle1" gutterBottom>
                                         背景图片设置
